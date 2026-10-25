@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Estacionar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0e6b5e}a:hover{color:#0a5a4f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #f4f5f1; color: #16201c; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #0e6b5e; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px">P</div>
+      <div style="display: flex; flex-direction: column; line-height: 1.15"><strong style="font-size: 15px">Estacionamiento Solidario</strong><span style="font-size: 12px; color: #5a6560">Hola, Lucía</span></div>
+    </div>
+    <h1 style="margin: 0; font-size: 26px">Estacionar</h1>
+    <h2 style="margin: 0; font-size: 16px">1. ¿Qué vehículo?</h2>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <sc-for list="{{vehiculos}}" as="v" hint-placeholder-count="2">
+        <button type="button" onClick="{{v.pick}}" style="{{v.estilo}}">
+          <span style="display: inline-flex; flex-direction: column; align-items: center; border: 2px solid #16201c; border-radius: 7px; overflow: hidden; background: #fff; font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 800; letter-spacing: .08em; line-height: 1"><span style="display: block; width: 100%; background: #1d4ed8; color: #fff; font-size: 7px; letter-spacing: .12em; padding: 2px 0; text-align: center">ARGENTINA</span><span style="padding: 5px 9px 6px; font-size: 16px; color: #111">{{v.patente}}</span></span>
+          <span style="font-size: 12px; color: #5a6560">{{v.alias}}</span>
+        </button>
+      </sc-for>
+    </div>
+    <h2 style="margin: 0; font-size: 16px">2. ¿Dónde estacionaste?</h2>
+    <div style="background: #fff; border: 1px solid #dbe0d9; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 5px; font-weight: 600; font-size: 13px">Código de cuadra
+        <input value="SM500" style="height: 50px; border: 1.5px solid #0e6b5e; border-radius: 10px; text-align: center; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 22px; font-weight: 800; letter-spacing: .12em"></label>
+      <span style="font-size: 12px; color: #5a6560">Está en el cartel de la cuadra o te lo dice tu trabajador/a.</span>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; background: #d9eee8; outline: 2px solid #0e6b5e">
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 4px">
+          <span style="font-weight: 600">San Martín 500–600</span>
+          <span style="font-size: 12px; color: #4a5550">Cuida: Ramón Díaz · Microcentro</span>
+          <span style="display: block; height: 7px; border-radius: 99px; background: #fff"><span style="display: block; width: 36%; height: 7px; border-radius: 99px; background: #0e6b5e"></span></span>
+        </div>
+        <span style="font-size: 12px; color: #4a5550">9 libres</span>
+      </div>
+    </div>
+    <h2 style="margin: 0; font-size: 16px">3. Confirmá</h2>
+    <div style="background: #fff; border: 1px solid #dbe0d9; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+      <div style="display: flex; justify-content: space-between"><span style="color: #5a6560">Tarifa</span><strong>$ 1.000 por hora</strong></div>
+      <div style="display: flex; justify-content: space-between"><span style="color: #5a6560">Tu saldo</span><strong>$ 5.700</strong></div>
+      <span style="font-size: 12px; color: #5a6560">Mínimo 30 min ($ 500), después por fracción de 15 min. Pagás al finalizar.</span>
+      <a href="EnCurso.dc.html" style="display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 10px; background: #0e6b5e; color: #fff; font-weight: 700; text-decoration: none; font-size: 16px">Comenzar estacionamiento</a>
+    </div>
+  </div>
+  <nav aria-label="Secciones" style="background: #fff; border-top: 1px solid #dbe0d9; padding: 6px 8px 10px; display: flex; justify-content: space-around">
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 10px; color: #5a6560; text-decoration: none; font-size: 11px; font-weight: 600; min-width: 64px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Inicio</a>
+    <a href="Estacionar.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 10px; color: #0e6b5e; background: #d9eee8; text-decoration: none; font-size: 11px; font-weight: 600; min-width: 64px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M10 17V7h3a3 3 0 0 1 0 6h-3"/></svg>Estacionar</a>
+    <a href="PagoListo.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 10px; color: #5a6560; text-decoration: none; font-size: 11px; font-weight: 600; min-width: 64px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1V7z"/><path d="M4 7l11-3v3"/><path d="M16 13.5h2"/></svg>Saldo</a>
+    <a href="PagoListo.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 10px; color: #5a6560; text-decoration: none; font-size: 11px; font-weight: 600; min-width: 64px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/><path d="M12 8v4l3 2"/></svg>Historial</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { elegido: 'AE123FG' };
+  }
+  renderVals() {
+    const base = 'display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px; border-radius: 10px; cursor: pointer; font: inherit; text-align: left; ';
+    const lista = [
+      { patente: 'AE123FG', alias: 'Mi auto' },
+      { patente: 'KLM482', alias: 'Auto de mamá' },
+    ];
+    return {
+      vehiculos: lista.map((v) => ({
+        ...v,
+        estilo: base + (v.patente === this.state.elegido
+          ? 'background: #d9eee8; border: 2px solid #0e6b5e;'
+          : 'background: #fff; border: 1.5px solid #dbe0d9;'),
+        pick: () => this.setState({ elegido: v.patente }),
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Estacionamiento en curso</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0e6b5e}a:hover{color:#0a5a4f}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #f4f5f1; color: #16201c; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+  <div style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow: hidden">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <div style="width: 36px; height: 36px; border-radius: 10px; background: #0e6b5e; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px">P</div>
+      <div style="display: flex; flex-direction: column; line-height: 1.15"><strong style="font-size: 15px">Estacionamiento Solidario</strong><span style="font-size: 12px; color: #5a6560">Hola, Lucía</span></div>
+    </div>
+    <div style="background: #0e6b5e; color: #fff; border-radius: 14px; padding: 16px; display: flex; justify-content: space-between; align-items: center">
+      <div style="display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 600; opacity: .85">Tu saldo</span><span style="font-size: 34px; font-weight: 800; letter-spacing: -0.02em">$ 5.700</span></div>
+      <a href="PagoListo.dc.html" style="background: #fff; color: #0e6b5e; font-weight: 700; text-decoration: none; padding: 9px 14px; border-radius: 10px; font-size: 14px">+ Cargar</a>
+    </div>
+    <h2 style="margin: 0; font-size: 18px">Estacionamiento en curso</h2>
+    <div style="background: #fff; border: 1px solid #dbe0d9; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <span style="display: inline-flex; align-items: center; gap: 6px; background: #dcf3e3; color: #15803d; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #15803d"></span>Estacionado</span>
+        <span style="display: inline-flex; flex-direction: column; align-items: center; border: 2px solid #16201c; border-radius: 7px; overflow: hidden; background: #fff; font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 800; letter-spacing: .08em; line-height: 1"><span style="display: block; width: 100%; background: #1d4ed8; color: #fff; font-size: 7px; letter-spacing: .12em; padding: 2px 0; text-align: center">ARGENTINA</span><span style="padding: 5px 9px 6px; font-size: 16px; color: #111">AE123FG</span></span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+        <span style="font-size: 44px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">{{reloj}}</span>
+        <span style="color: #5a6560; font-size: 14px">Llevás <strong style="color: #16201c">{{monto}}</strong> · desde las 10:15</span>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: flex-start; border-top: 1px solid #dbe0d9; padding-top: 12px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+        <div style="display: flex; flex-direction: column"><strong>San Martín 500–600</strong><span style="font-size: 13px; color: #5a6560">Microcentro · $ 1.000/h</span></div>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: flex-start; border-top: 1px solid #dbe0d9; padding-top: 12px; font-size: 14px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+        <span>Tu cuadra la cuida <strong>Ramón Díaz</strong>, trabajador cooperativista.</span>
+      </div>
+      <a href="PagoListo.dc.html" style="display: flex; align-items: center; justify-content: center; height: 54px; border-radius: 10px; background: #0e6b5e; color: #fff; font-weight: 700; text-decoration: none; font-size: 17px">Finalizar y pagar</a>
+    </div>
+    <span style="font-size: 12px; color: #5a6560; text-align: center">Lunes a viernes de 8 a 20 h · Sábados de 8 a 13 h</span>
+  </div>
+  <nav aria-label="Secciones" style="background: #fff; border-top: 1px solid #dbe0d9; padding: 6px 8px 10px; display: flex; justify-content: space-around">
+    <a href="EnCurso.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 10px; color: #0e6b5e; background: #d9eee8; text-decoration: none; font-size: 11px; font-weight: 600; min-width: 64px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Inicio</a>
+    <a href="Estacionar.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 10px; color: #5a6560; text-decoration: none; font-size: 11px; font-weight: 600; min-width: 64px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M10 17V7h3a3 3 0 0 1 0 6h-3"/></svg>Estacionar</a>
+    <a href="PagoListo.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 10px; color: #5a6560; text-decoration: none; font-size: 11px; font-weight: 600; min-width: 64px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1V7z"/><path d="M4 7l11-3v3"/><path d="M16 13.5h2"/></svg>Saldo</a>
+    <a href="PagoListo.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 10px; border-radius: 10px; color: #5a6560; text-decoration: none; font-size: 11px; font-weight: 600; min-width: 64px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v4h4"/><path d="M12 8v4l3 2"/></svg>Historial</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { segundos: 37 * 60 + 12 };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ segundos: this.state.segundos + 1 }), 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  renderVals() {
+    const s = this.state.segundos;
+    const p = (n) => String(n).padStart(2, '0');
+    const minutos = Math.ceil(s / 60);
+    const facturables = Math.max(30, Math.ceil(minutos / 15) * 15);
+    const monto = Math.round((facturables / 60) * 1000);
+    return {
+      reloj: p(Math.floor(s / 3600)) + ':' + p(Math.floor((s % 3600) / 60)) + ':' + p(s % 60),
+      monto: '$ ' + monto.toLocaleString('es-AR'),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-25T00:55:00Z" },
+  "title": "Prototipos · Estacionamiento Solidario",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "1 · Bienvenida", "is_interactive": true },
+    "Estacionar.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "2 · Estacionar", "is_interactive": true },
+    "EnCurso.dc.html": { "x": 940, "y": 0, "w": 390, "h": 844, "title": "3 · Estacionamiento en curso", "is_interactive": true },
+    "PagoListo.dc.html": { "x": 1410, "y": 0, "w": 390, "h": 844, "title": "4 · Pago confirmado", "is_interactive": true },
+    "TrabajadorInicio.dc.html": { "x": 0, "y": 1264, "w": 390, "h": 844, "title": "5 · Jornada del trabajador/a", "is_interactive": true },
+    "ConsultaSinPago.dc.html": { "x": 470, "y": 1264, "w": 390, "h": 844, "title": "6 · Consulta: sin pago", "is_interactive": true },
+    "CobroEfectivo.dc.html": { "x": 940, "y": 1264, "w": 390, "h": 844, "title": "7 · Cobro en efectivo", "is_interactive": true },
+    "ConsultaOk.dc.html": { "x": 1410, "y": 1264, "w": 390, "h": 844, "title": "8 · Consulta: pago registrado", "is_interactive": true },
+    "PanelAdmin.dc.html": { "x": 0, "y": 2528, "w": 1280, "h": 1040, "title": "9 · Panel de administración", "expand": "fill" },
+    "Transparencia.dc.html": { "x": 1360, "y": 2528, "w": 390, "h": 844, "title": "10 · Portal de transparencia" }
+  },
+  "order": [
+    "Main.dc.html",
+    "Estacionar.dc.html",
+    "EnCurso.dc.html",
+    "PagoListo.dc.html",
+    "TrabajadorInicio.dc.html",
+    "ConsultaSinPago.dc.html",
+    "CobroEfectivo.dc.html",
+    "ConsultaOk.dc.html",
+    "PanelAdmin.dc.html",
+    "Transparencia.dc.html"
+  ],
+  "notes": {
+    "fila1": { "x": 0, "y": -300, "text": "Conductor/a: estacionar y pagar desde el celular", "kind": "title1", "maxW": 1800 },
+    "fila2": { "x": 0, "y": 964, "text": "Trabajador/a cooperativista: control y cobro en la cuadra", "kind": "title1", "maxW": 1800 },
+    "fila3": { "x": 0, "y": 2228, "text": "Administración y transparencia", "kind": "title1", "maxW": 1800 }
+  },
+  "designSystems": []
+}

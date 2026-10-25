@@ -1,0 +1,11 @@
+{
+  "name": "Estacionamiento Solidario Tucumán",
+  "short_name": "Estacioná",
+  "description": "Estacionamiento Medido Solidario — Cooperativas APARKAR LTDA y UNIDOS PARA SERVIR",
+  "lang": "es-AR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f5f1",
+  "theme_color": "#0e6b5e",
+  "icons": [{ "src": "/img/icono.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
