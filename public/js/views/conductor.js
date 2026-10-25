@@ -37,7 +37,7 @@ function tarjetaActivo(e) {
     <div class="list">
       <div class="list-item">${icono('pin')}<span class="grow"><span class="title">${cuadraTxt(e)}</span><br>
         <span class="small muted"><span class="dot" style="background:${e.zona_color};width:8px;height:8px"></span> ${e.zona} · ${pesos(e.tarifa_hora)}/h</span></span></div>
-      ${e.trabajador ? html`<div class="list-item">${icono('corazon')}<span class="grow small">Tu cuadra la cuida <strong>${e.trabajador}</strong>, trabajador/a cooperativista.</span></div>` : ''}
+      ${e.trabajador ? html`<div class="list-item">${icono('corazon')}<span class="grow small">Te atiende <strong>${e.trabajador}</strong> <span style="white-space:nowrap">(ID ${e.trabajador_legajo})</span>, trabajador/a cooperativista.</span></div>` : ''}
     </div>
     <button class="btn primary block lg" data-finalizar="${e.id}">Finalizar y pagar</button>
   </article>`;
@@ -85,13 +85,12 @@ export async function inicio(ctx) {
 }
 
 export async function estacionar(ctx) {
-  const [r, zonas] = await Promise.all([get('/conductor/resumen'), get('/zonas')]);
+  const r = await get('/conductor/resumen');
   if (r.activos.length) {
     toast('Ya tenés un estacionamiento en curso.');
     return ctx.ir('c');
   }
-  const sel = { vehiculo: r.vehiculos[0]?.id ?? null, cuadra: null, zona: zonas[0]?.id };
-  const todas = zonas.flatMap((z) => z.cuadras.map((c) => ({ ...c, zona: z })));
+  const sel = { vehiculo: r.vehiculos[0]?.id ?? null, trabajador: null, cuadra: null };
 
   pagina(ctx, html`
     <h1>Estacionar</h1>
@@ -101,79 +100,100 @@ export async function estacionar(ctx) {
           ${patente(v.patente)}<span class="small muted">${v.alias || ''}</span></button>`)}</div>`
       : html`<a class="btn primary block" href="#/c/vehiculos">${icono('mas')} Agregar mi primer vehículo</a>`}
 
-    <div class="section"><h2>2. ¿Dónde estacionaste?</h2></div>
-    <div class="card stack">
-      <label class="field">Código de cuadra
-        <input class="input plate-input" id="codigo" placeholder="SM500" maxlength="8" autocomplete="off">
-        <span class="hint">Lo encontrás en el cartel de la cuadra o te lo dice tu trabajador/a.</span></label>
-      <div class="divider">o buscala en la lista</div>
-      <div class="segmented" id="zonas">${zonas.map((z) => html`<button data-z="${z.id}" aria-pressed="${z.id === sel.zona}">${z.nombre}</button>`)}</div>
-      <div class="list" id="cuadras"></div>
-    </div>
+    <div class="section"><h2>2. ¿Quién te atiende?</h2></div>
+    <form class="card stack" id="buscar-trabajador">
+      <label class="field">ID del trabajador/a
+        <input class="input plate-input" id="id-trabajador" name="id" placeholder="APK-100" maxlength="12" autocomplete="off" autocapitalize="characters" required>
+        <span class="hint">Pedíselo al trabajador/a de la cuadra: figura en su credencial.</span></label>
+      <button class="btn ghost block" type="submit">${icono('buscar')} Buscar</button>
+      <div id="trabajador"></div>
+    </form>
 
     <div class="section"><h2>3. Confirmá</h2></div>
     <div class="card stack" id="resumen"></div>
   `);
 
-  const pintarCuadras = () => {
-    const z = zonas.find((x) => x.id === sel.zona);
-    montar($('#cuadras'), z.cuadras.map((c) => {
-      const pct = Math.min(100, Math.round((c.ocupados / c.capacidad) * 100));
-      return html`<button class="pick-row" data-c="${c.id}" aria-pressed="${c.id === sel.cuadra}">
-        <span class="grow"><span class="title">${cuadraTxt(c)}</span> <span class="badge">${c.codigo}</span><br>
-        <span class="small muted">${c.trabajador ? `Cuida: ${c.trabajador}` : 'Sin trabajador/a asignado'}</span>
-        <span class="meter ${pct > 90 ? 'full' : pct > 70 ? 'warn' : ''}" style="margin-top:6px"><span style="width:${pct}%"></span></span></span>
-        <span class="small muted num">${c.capacidad - c.ocupados} libres</span></button>`;
-    }));
+  const pintarTrabajador = () => {
+    const t = sel.trabajador;
+    if (!t) return montar($('#trabajador'), '');
+    montar($('#trabajador'), html`<div class="stack">
+      <div class="row" style="gap:12px">
+        <span style="width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);flex:none">${icono('usuario')}</span>
+        <span class="grow"><strong>${t.nombre}</strong><br><span class="small muted">${t.cooperativa} · <span style="white-space:nowrap">ID ${t.legajo}</span></span></span>
+        ${t.en_jornada ? html`<span class="badge ok">En jornada</span>` : html`<span class="badge warn">Fuera de turno</span>`}
+      </div>
+      ${t.cuadras.length > 1 ? html`<span class="small muted">¿En cuál de sus cuadras estacionaste?</span>` : ''}
+      <div class="list">${t.cuadras.map((c) => {
+        const pct = Math.min(100, Math.round((c.ocupados / c.capacidad) * 100));
+        return html`<button type="button" class="pick-row" data-c="${c.id}" aria-pressed="${c.id === sel.cuadra}">
+          <span class="grow"><span class="title">${cuadraTxt(c)}</span> <span class="badge">${c.codigo}</span><br>
+          <span class="small muted"><span class="dot" style="background:${c.zona_color};width:8px;height:8px"></span> ${c.zona} · ${pesos(c.tarifa_hora)}/h</span>
+          <span class="meter ${pct > 90 ? 'full' : pct > 70 ? 'warn' : ''}" style="margin-top:6px"><span style="width:${pct}%"></span></span></span>
+          <span class="small muted num">${Math.max(0, c.capacidad - c.ocupados)} libres</span></button>`;
+      })}</div>
+      ${t.cuadras.length ? '' : html`<p class="small" style="margin:0;color:var(--danger)">Este trabajador/a no tiene cuadras asignadas.</p>`}
+    </div>`);
     $$('[data-c]').forEach((b) => b.addEventListener('click', () => {
       sel.cuadra = Number(b.dataset.c);
-      $('#codigo').value = todas.find((c) => c.id === sel.cuadra).codigo;
-      pintarCuadras();
+      pintarTrabajador();
       pintarResumen();
     }));
   };
 
   const pintarResumen = () => {
-    const c = todas.find((x) => x.id === sel.cuadra);
+    const t = sel.trabajador;
+    const c = t?.cuadras.find((x) => x.id === sel.cuadra);
     const v = r.vehiculos.find((x) => x.id === sel.vehiculo);
-    const minimo = c ? calcularMonto(0, c.zona.tarifa_hora, ctx.params) : 0;
+    const minimo = c ? calcularMonto(0, c.tarifa_hora, ctx.params) : 0;
     montar($('#resumen'), html`
       <div class="list">
         <div class="list-item"><span class="grow muted">Vehículo</span>${v ? patente(v.patente) : html`<span class="muted">—</span>`}</div>
+        <div class="list-item"><span class="grow muted">Te atiende</span><strong>${t ? `${t.nombre} (${t.legajo})` : '—'}</strong></div>
         <div class="list-item"><span class="grow muted">Cuadra</span><strong>${c ? cuadraTxt(c) : '—'}</strong></div>
-        <div class="list-item"><span class="grow muted">Tarifa</span><strong class="num">${c ? `${pesos(c.zona.tarifa_hora)} por hora` : '—'}</strong></div>
+        <div class="list-item"><span class="grow muted">Tarifa</span><strong class="num">${c ? `${pesos(c.tarifa_hora)} por hora` : '—'}</strong></div>
         <div class="list-item"><span class="grow muted">Tu saldo</span><strong class="num">${pesos(r.saldo)}</strong></div>
       </div>
       <p class="small muted" style="margin:0">Se cobra un mínimo de ${ctx.params.minimo_minutos} min${c ? ` (${pesos(minimo)})` : ''} y después por fracción de ${ctx.params.fraccion_minutos} min. Pagás recién cuando finalizás.</p>
       <button class="btn primary block lg" id="confirmar" ${!v || !c ? 'disabled' : ''}>Comenzar estacionamiento</button>`);
     $('#confirmar').addEventListener('click', (e) => accion(e.currentTarget, async () => {
-      await post('/conductor/estacionar', { vehiculo_id: sel.vehiculo, cuadra_id: sel.cuadra });
-      toast('¡Listo! Tu estacionamiento está en curso.');
+      await post('/conductor/estacionar', { vehiculo_id: sel.vehiculo, trabajador_id: t.legajo, cuadra_id: sel.cuadra });
+      toast(`¡Listo! Tu estacionamiento con ${t.nombre} está en curso.`);
       ctx.ir('c');
     }));
   };
+
+  const buscarTrabajador = (id, boton) => accion(boton, async () => {
+    sel.trabajador = null;
+    sel.cuadra = null;
+    try {
+      const t = await get(`/conductor/trabajador/${encodeURIComponent(id)}`);
+      sel.trabajador = t;
+      // Preselecciona la cuadra de su jornada en curso, o la única que tenga.
+      sel.cuadra = t.cuadras.find((c) => c.id === t.cuadra_jornada_id)?.id ?? (t.cuadras.length === 1 ? t.cuadras[0].id : null);
+    } finally {
+      pintarTrabajador();
+      pintarResumen();
+    }
+  });
 
   $$('[data-v]').forEach((b) => b.addEventListener('click', () => {
     sel.vehiculo = Number(b.dataset.v);
     $$('[data-v]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     pintarResumen();
   }));
-  $$('[data-z]').forEach((b) => b.addEventListener('click', () => {
-    sel.zona = Number(b.dataset.z);
-    $$('[data-z]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    pintarCuadras();
-  }));
-  $('#codigo').addEventListener('input', (e) => {
-    const c = todas.find((x) => x.codigo === e.target.value.trim().toUpperCase());
-    sel.cuadra = c?.id ?? null;
-    if (c) {
-      sel.zona = c.zona.id;
-      $$('[data-z]').forEach((x) => x.setAttribute('aria-pressed', String(Number(x.dataset.z) === sel.zona)));
-    }
-    pintarCuadras();
-    pintarResumen();
+  // Busca solo cuando el ID tiene la forma esperada (3 letras y 3 números), sin esperar al botón.
+  let espera;
+  $('#buscar-trabajador').addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearTimeout(espera);
+    buscarTrabajador($('#id-trabajador').value, e.submitter);
   });
-  pintarCuadras();
+  $('#id-trabajador').addEventListener('input', (e) => {
+    clearTimeout(espera);
+    const valor = e.target.value;
+    if (/^[A-Za-z]{3}[\s-]?\d{3}$/.test(valor.trim())) espera = setTimeout(() => buscarTrabajador(valor), 350);
+  });
+  ctx.alSalir(() => clearTimeout(espera));
   pintarResumen();
 }
 

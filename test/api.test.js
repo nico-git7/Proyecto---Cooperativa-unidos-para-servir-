@@ -39,12 +39,23 @@ test('flujo completo del conductor: estacionar, consultar y pagar', async () => 
   const libre = await llamar(`/trabajador/patente/${vehiculo.patente}`, { token: tt });
   assert.equal(libre.data.habilitado, false);
 
-  const est = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: vehiculo.id, codigo: 'SM500' } });
+  // El ID se acepta sin guion ni mayúsculas; Ramón Díaz está en jornada en SM500.
+  const t = await llamar('/conductor/trabajador/apk%20100', { token: tc });
+  assert.equal(t.status, 200);
+  assert.equal(t.data.nombre, 'Ramón Díaz');
+  assert.deepEqual(t.data.cuadras.map((c) => c.codigo), ['SM500', 'SM600']);
+
+  const est = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: vehiculo.id, trabajador_id: 'APK-100' } });
   assert.equal(est.status, 201);
   assert.equal(est.data.estado, 'activo');
+  assert.equal(est.data.cuadra_codigo, 'SM500');
+  assert.equal(est.data.trabajador, 'Ramón Díaz');
 
-  const doble = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: vehiculo.id, codigo: 'SM600' } });
+  const doble = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: vehiculo.id, trabajador_id: 'APK-100' } });
   assert.equal(doble.status, 409);
+
+  const enMiLista = (await llamar('/trabajador/resumen', { token: tt })).data.activos.some((e) => e.id === est.data.id);
+  assert.ok(enMiLista, 'el estacionamiento aparece en la lista del trabajador/a');
 
   const ok = await llamar(`/trabajador/patente/${vehiculo.patente}`, { token: tt });
   assert.equal(ok.data.habilitado, true);
@@ -67,6 +78,27 @@ test('el trabajador/a registra y cobra en efectivo solo en sus cuadras', async (
   const fin = await llamar(`/trabajador/estacionamientos/${e.data.id}/finalizar`, { token: tt, method: 'POST' });
   const despues = (await llamar('/trabajador/resumen', { token: tt })).data.efectivo_a_rendir;
   assert.equal(despues - antes, fin.data.monto);
+});
+
+test('estacionar exige un ID de trabajador/a válido y una cuadra suya', async () => {
+  const tc = await login('conductor@demo.com');
+  const { vehiculos } = (await llamar('/conductor/resumen', { token: tc })).data;
+  const v = vehiculos[1];
+  const sinId = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: v.id } });
+  assert.equal(sinId.status, 400);
+  const inexistente = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: v.id, trabajador_id: 'XYZ-999' } });
+  assert.equal(inexistente.status, 404);
+  const cuadraAjena = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: v.id, trabajador_id: 'UPS-101', cuadra_id: 1 } });
+  assert.equal(cuadraAjena.status, 400);
+  // Silvia Juárez (UPS-103) tiene dos cuadras: fuera de su jornada hay que elegir una.
+  await llamar('/trabajador/jornada/finalizar', { token: await login('silvia@demo.com'), method: 'POST' });
+  const ambigua = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: v.id, trabajador_id: 'UPS-103' } });
+  assert.equal(ambigua.status, 400);
+  const silvia = (await llamar('/conductor/trabajador/UPS-103', { token: tc })).data;
+  assert.equal(silvia.en_jornada, false);
+  const ok = await llamar('/conductor/estacionar', { token: tc, method: 'POST', body: { vehiculo_id: v.id, trabajador_id: 'ups103', cuadra_id: silvia.cuadras[1].id } });
+  assert.equal(ok.status, 201);
+  assert.equal(ok.data.cuadra_codigo, silvia.cuadras[1].codigo);
 });
 
 test('roles protegidos', async () => {

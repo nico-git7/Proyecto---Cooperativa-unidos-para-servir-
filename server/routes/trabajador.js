@@ -52,7 +52,7 @@ export default function rutasTrabajador(db) {
     const id = req.usuario.id;
     const hoy = inicioDiaLocal();
     const cuadras = misCuadras(id);
-    const activos = buscarEstacionamientos(db, `WHERE c.trabajador_id = ? AND e.estado = 'activo' ORDER BY e.inicio`, id).map((e) =>
+    const activos = buscarEstacionamientos(db, `WHERE e.trabajador_id = ? AND e.estado = 'activo' ORDER BY e.inicio`, id).map((e) =>
       conMontoActual(e, params),
     );
     const totales = db
@@ -61,8 +61,8 @@ export default function rutasTrabajador(db) {
            COALESCE(SUM(CASE WHEN e.medio = 'app' THEN e.monto END), 0) AS app,
            COALESCE(SUM(CASE WHEN e.medio = 'efectivo' THEN e.monto END), 0) AS efectivo,
            COUNT(*) AS cantidad
-         FROM estacionamientos e JOIN cuadras c ON c.id = e.cuadra_id
-         WHERE c.trabajador_id = ? AND e.estado = 'finalizado' AND e.fin >= ?`,
+         FROM estacionamientos e
+         WHERE e.trabajador_id = ? AND e.estado = 'finalizado' AND e.fin >= ?`,
       )
       .get(id, hoy);
     const aRendir = db

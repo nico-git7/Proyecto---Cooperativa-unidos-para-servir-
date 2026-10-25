@@ -96,8 +96,8 @@ export default function rutasAdmin(db) {
       .prepare(
         `SELECT u.*,
            (SELECT COUNT(*) FROM jornadas j WHERE j.trabajador_id = u.id AND j.fin IS NULL) AS en_jornada,
-           (SELECT COALESCE(SUM(e.monto),0) FROM estacionamientos e JOIN cuadras c ON c.id = e.cuadra_id
-              WHERE c.trabajador_id = u.id AND e.estado='finalizado' AND e.fin >= ?) AS recaudado_mes,
+           (SELECT COALESCE(SUM(e.monto),0) FROM estacionamientos e
+              WHERE e.trabajador_id = u.id AND e.estado='finalizado' AND e.fin >= ?) AS recaudado_mes,
            (SELECT COALESCE(SUM(e.monto),0) FROM estacionamientos e
               WHERE e.registrado_por = u.id AND e.medio='efectivo' AND e.estado='finalizado' AND e.rendido=0) AS efectivo_a_rendir,
            (SELECT COALESCE(SUM((julianday(COALESCE(j.fin, strftime('%Y-%m-%dT%H:%M:%fZ','now'))) - julianday(j.inicio))*24),0)
@@ -122,12 +122,22 @@ export default function rutasAdmin(db) {
     const mail = email.trim().toLowerCase();
     if (db.prepare('SELECT 1 FROM usuarios WHERE email = ?').get(mail)) throw new ErrorNegocio('Ya existe un usuario con ese email.', 409);
     const clave = password && String(password).length >= 6 ? String(password) : String(dni).trim();
+    // ID para que el conductor/a lo identifique al estacionar: el indicado o el próximo libre (APK-108, UPS-109…).
+    let id = String(legajo || '').trim().toUpperCase();
+    if (!id) {
+      const prefijo = cooperativa === 'APARKAR LTDA' ? 'APK' : 'UPS';
+      const max = db.prepare(`SELECT MAX(CAST(SUBSTR(legajo, INSTR(legajo, '-') + 1) AS INTEGER)) AS n FROM usuarios WHERE legajo LIKE '%-%'`).get().n || 99;
+      id = `${prefijo}-${max + 1}`;
+    }
+    if (!/^[A-Z0-9-]{3,12}$/.test(id)) throw new ErrorNegocio('El ID solo puede tener letras, números y guiones (ej.: APK-120).');
+    const idNormal = id.replace(/-/g, '');
+    if (db.prepare(`SELECT 1 FROM usuarios WHERE REPLACE(UPPER(legajo), '-', '') = ?`).get(idNormal)) throw new ErrorNegocio('Ese ID ya está en uso.', 409);
     const { lastInsertRowid } = db
       .prepare(
         `INSERT INTO usuarios (rol, nombre, dni, email, telefono, cooperativa, legajo, password_hash)
          VALUES ('trabajador', ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(nombre.trim(), dni.trim(), mail, telefono || null, cooperativa, legajo || null, hashPassword(clave));
+      .run(nombre.trim(), dni.trim(), mail, telefono || null, cooperativa, id, hashPassword(clave));
     res.status(201).json(usuarioPublico(db.prepare('SELECT * FROM usuarios WHERE id = ?').get(lastInsertRowid)));
   });
 

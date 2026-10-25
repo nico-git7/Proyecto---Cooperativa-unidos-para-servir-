@@ -28,6 +28,11 @@ export async function inicio(ctx) {
   const r = await get('/trabajador/resumen');
   const enCurso = r.activos;
   pagina(ctx, html`
+    <div class="card row between" style="margin-bottom:12px">
+      <span><span class="small muted">Tu ID para los conductores</span><br>
+        <strong class="num" style="font-size:1.7rem;letter-spacing:.06em;font-family:ui-monospace,Menlo,Consolas,monospace">${ctx.usuario.legajo}</strong></span>
+      <span class="small muted" style="max-width:150px;text-align:right">Lo ingresan en la app al estacionar con vos</span>
+    </div>
     ${r.jornada
       ? html`<div class="card hero stack">
           <div class="row between"><span class="badge" style="background:var(--primary-ink);color:var(--primary)"><span class="dot pulse" style="background:currentColor;width:8px;height:8px"></span> En jornada</span>

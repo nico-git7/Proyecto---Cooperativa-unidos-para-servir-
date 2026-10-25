@@ -10,10 +10,21 @@ La misma app (web, instalable en el celular) tiene tres perfiles:
 
 | Perfil | Funciones |
 |---|---|
-| **Conductor/a** | Registro, vehículos (patentes), saldo y cargas, estacionar indicando el código de cuadra, cronómetro y costo en vivo, finalizar y pagar, historial. Ve qué trabajador/a cuida su cuadra. |
-| **Trabajador/a cooperativista** | Inicio y fin de jornada (registro de horario), consulta de patente (¿pagó o no?), cobro en efectivo a quien no usa la app, cierre y cobro según el tiempo real, actas de infracción, resumen del día y efectivo a rendir. |
+| **Conductor/a** | Registro, vehículos (patentes), saldo y cargas, estacionar ingresando el **ID del trabajador/a** que lo atiende, cronómetro y costo en vivo, finalizar y pagar, historial. |
+| **Trabajador/a cooperativista** | Su ID visible para dárselo a los conductores, inicio y fin de jornada (registro de horario), consulta de patente (¿pagó o no?), cobro en efectivo a quien no usa la app, cierre y cobro según el tiempo real, actas de infracción, resumen del día y efectivo a rendir. |
 | **Administración** | Panel con recaudación (hoy, mes, últimos 7 días por medio de pago), ocupación por zona, vehículos en vivo, trabajadores/as (altas, bajas, horas, recaudación, rendición de efectivo), cuadras y asignaciones, tarifas por zona, validación de actas, configuración de reglas de cobro y de la distribución de lo recaudado, exportación CSV. |
 | **Público** | Portal de transparencia: cuánto se recaudó en el mes y cómo se distribuye (trabajadores/as, municipio, fondo solidario, tecnología). |
+
+### Estacionar con el ID del trabajador/a
+
+Cada trabajador/a tiene un ID único (por ejemplo `APK-100` en APARKAR LTDA o `UPS-101` en UNIDOS PARA SERVIR) que figura en su credencial y en su pantalla de inicio. Para estacionar por la app, el conductor/a **tiene que ingresar ese ID**:
+
+- La app muestra nombre, cooperativa, si está en jornada y las cuadras a su cargo.
+- La cuadra se elige entre las del trabajador/a (se preselecciona la de su jornada en curso, o la única que tenga).
+- No se puede estacionar con un ID inexistente o de un trabajador/a dado de baja, ni en una cuadra que no esté a su cargo.
+- El ID se acepta escrito de cualquier forma: `APK-100`, `apk100` o `apk 100`.
+- Cada estacionamiento queda a nombre de ese trabajador/a: aparece en su lista y suma a su recaudación.
+- Al dar de alta un trabajador/a, la administración puede indicar el ID o dejar que se genere solo.
 
 ### Reglas de cobro
 
@@ -41,8 +52,10 @@ Contraseña de todos: `demo1234` (en la pantalla de inicio hay botones para entr
 | Email | Perfil |
 |---|---|
 | `conductor@demo.com` | Conductora con saldo y dos vehículos |
-| `trabajador@demo.com` | Ramón Díaz, APARKAR LTDA, cuadras San Martín 500 y 600 |
+| `trabajador@demo.com` | Ramón Díaz, APARKAR LTDA, **ID `APK-100`**, cuadras San Martín 500 y 600 |
 | `admin@demo.com` | Administración de las cooperativas |
+
+Para probar el flujo completo: entrá como conductora, tocá **Estacionar** y escribí el ID `APK-100` (Ramón Díaz) o `UPS-105` (Norma Herrera, que tiene dos cuadras).
 
 Otros comandos:
 

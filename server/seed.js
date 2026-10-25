@@ -178,6 +178,9 @@ export function sembrar(db, { ahora = new Date() } = {}) {
     const gastado = db.prepare(`SELECT -SUM(monto) AS g FROM movimientos WHERE usuario_id = ? AND tipo = 'pago'`).get(conductorId).g;
     db.prepare('UPDATE usuarios SET saldo = ? WHERE id = ?').run(10000 - gastado, conductorId);
 
+    // Cada estacionamiento queda a nombre del trabajador/a que atiende la cuadra.
+    db.exec('UPDATE estacionamientos SET trabajador_id = COALESCE(registrado_por, (SELECT trabajador_id FROM cuadras WHERE cuadras.id = estacionamientos.cuadra_id))');
+
     // Actas pendientes de validación.
     const insActa = db.prepare('INSERT INTO actas (patente, cuadra_id, trabajador_id, motivo, observacion, fecha, estado) VALUES (?, ?, ?, ?, ?, ?, ?)');
     const motivos = ['Sin estacionamiento registrado', 'Se negó a abonar', 'Obstruye rampa o garaje', 'Estaciona en lugar prohibido'];

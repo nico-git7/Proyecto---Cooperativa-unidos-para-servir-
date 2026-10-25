@@ -6,6 +6,6 @@
 
 Recorrido sugerido para una presentación:
 
-1. Bienvenida → el conductor/a estaciona con el código de cuadra (SM500) → ve el cronómetro y lo que lleva gastado → finaliza y ve a dónde va su pago.
-2. El trabajador/a inicia su jornada, consulta una patente sin pago, registra el ingreso en efectivo y lo cobra al retirarse.
+1. Bienvenida → el conductor/a estaciona ingresando el ID del trabajador/a que lo atiende (APK-100) → ve el cronómetro y lo que lleva gastado → finaliza y ve a dónde va su pago.
+2. El trabajador/a ve su ID para dárselo a los conductores, inicia su jornada, consulta una patente sin pago, registra el ingreso en efectivo y lo cobra al retirarse.
 3. La administración ve recaudación, ocupación, asistencia y efectivo a rendir; el público ve el portal de transparencia.

@@ -148,11 +148,11 @@ export async function monitoreo(ctx) {
   const lista = await get('/admin/estacionamientos?estado=activo');
   pagina(ctx, html`
     <div class="row between wrap"><h1 style="margin:0">En vivo</h1><span class="badge primary">${lista.length} vehículos estacionados</span></div>
-    <input class="input" id="filtro" placeholder="Buscar patente, calle o trabajador/a…" style="margin:14px 0">
+    <input class="input" id="filtro" placeholder="Buscar patente, calle, trabajador/a o ID…" style="margin:14px 0">
     <div class="card"><div class="table-wrap"><table class="table">
       <thead><tr><th>Patente</th><th>Cuadra</th><th>Medio</th><th>Desde</th><th class="r">Tiempo</th><th class="r">Monto actual</th><th></th></tr></thead>
-      <tbody>${lista.map((e) => html`<tr data-buscar="${`${e.patente} ${e.calle} ${e.cuadra_codigo} ${e.trabajador || ''}`.toLowerCase()}">
-        <td>${patente(e.patente)}</td><td><span class="dot" style="background:${e.zona_color}"></span> ${cuadraTxt(e)}<br><span class="small muted">${e.trabajador || ''}</span></td>
+      <tbody>${lista.map((e) => html`<tr data-buscar="${`${e.patente} ${e.calle} ${e.cuadra_codigo} ${e.trabajador || ''} ${e.trabajador_legajo || ''} ${(e.trabajador_legajo || '').replace('-', '')}`.toLowerCase()}">
+        <td>${patente(e.patente)}</td><td><span class="dot" style="background:${e.zona_color}"></span> ${cuadraTxt(e)}<br><span class="small muted">${e.trabajador ? `${e.trabajador} · ${e.trabajador_legajo}` : ''}</span></td>
         <td><span class="badge ${e.medio === 'app' ? 'primary' : 'warn'}">${e.medio === 'app' ? 'App' : 'Efectivo'}</span></td>
         <td class="num">${hora(e.inicio)}</td><td class="r num">${duracion(e.minutos_transcurridos)}</td><td class="r num"><strong>${pesos(e.monto_actual)}</strong></td>
         <td class="r"><button class="btn ghost sm" data-cerrar="${e.id}" data-patente="${e.patente}">Cerrar</button></td></tr>`)}</tbody>
@@ -177,7 +177,7 @@ export async function trabajadores(ctx) {
     <div class="card"><div class="table-wrap"><table class="table">
       <thead><tr><th>Nombre</th><th>Cooperativa</th><th>Cuadras</th><th>Estado</th><th class="r">Horas</th><th class="r">Recaudado</th><th class="r">Efectivo a rendir</th><th></th></tr></thead>
       <tbody>${lista.map((u) => html`<tr style="${u.activo ? '' : 'opacity:.55'}">
-        <td><strong>${u.nombre}</strong><br><span class="small muted">${u.legajo || ''} · DNI ${u.dni || '—'}</span></td>
+        <td><strong>${u.nombre}</strong><br><span class="small muted">ID <strong>${u.legajo || '—'}</strong> · DNI ${u.dni || '—'}</span></td>
         <td class="small">${u.cooperativa}</td>
         <td class="small">${u.cuadras.length ? u.cuadras.map((c) => html`<span class="badge" style="margin:1px">${c.codigo}</span>`) : html`<span class="muted">—</span>`}</td>
         <td>${!u.activo ? html`<span class="badge">Inactivo</span>` : u.en_jornada ? html`<span class="badge ok">En jornada</span>` : html`<span class="badge">Fuera de turno</span>`}</td>
@@ -198,11 +198,11 @@ export async function trabajadores(ctx) {
     <form class="stack" id="alta">
       <label class="field">Nombre y apellido<input class="input" name="nombre" required></label>
       <div class="grid-2"><label class="field">DNI<input class="input" name="dni" required inputmode="numeric"></label>
-        <label class="field">Legajo<input class="input" name="legajo"></label></div>
+        <label class="field">ID (opcional)<input class="input" name="legajo" placeholder="Se genera solo" maxlength="12"></label></div>
       <label class="field">Email<input class="input" name="email" type="email" required></label>
       <label class="field">Teléfono<input class="input" name="telefono" type="tel"></label>
       <label class="field">Cooperativa<select class="input" name="cooperativa"><option>APARKAR LTDA</option><option>UNIDOS PARA SERVIR</option></select></label>
-      <p class="hint" style="margin:0">La contraseña inicial es el DNI. Después asignale cuadras en "Cuadras y tarifas".</p>
+      <p class="hint" style="margin:0">El ID es el que el conductor/a ingresa en la app al estacionar; si lo dejás vacío se genera solo (ej.: APK-109). La contraseña inicial es el DNI. Después asignale cuadras en "Cuadras y tarifas".</p>
       <button class="btn primary block" type="submit">Dar de alta</button>
     </form>`, (d, cerrar) => {
     $('#alta', d).addEventListener('submit', (e) => {

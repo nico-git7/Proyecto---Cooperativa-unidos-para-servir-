@@ -8,6 +8,7 @@ import {
   ErrorNegocio,
   finalizarEstacionamiento,
   iniciarEstacionamiento,
+  trabajadorPorId,
 } from '../servicios.js';
 
 const MEDIOS_CARGA = { tarjeta: 'Tarjeta de débito/crédito', billetera: 'Billetera virtual', transferencia: 'Transferencia' };
@@ -50,15 +51,25 @@ export default function rutasConductor(db) {
     res.json(vehiculosDe(req.usuario.id));
   });
 
+  // El conductor/a identifica al trabajador/a que lo atiende con el ID de su credencial.
+  r.get('/trabajador/:id', (req, res) => res.json(trabajadorPorId(db, req.params.id)));
+
   r.post('/estacionar', (req, res) => {
-    const { vehiculo_id, cuadra_id, codigo } = req.body || {};
+    const { vehiculo_id, trabajador_id, cuadra_id } = req.body || {};
     const v = db.prepare('SELECT * FROM vehiculos WHERE id = ? AND usuario_id = ?').get(Number(vehiculo_id), req.usuario.id);
     if (!v) throw new ErrorNegocio('Elegí uno de tus vehículos.');
+    const t = trabajadorPorId(db, trabajador_id);
+    if (!t.cuadras.length) throw new ErrorNegocio(`${t.nombre} no tiene cuadras asignadas en este momento.`);
+    // Cuadra: la elegida (si es del trabajador/a), si no la de su jornada en curso, o la única que tenga.
+    const elegida = cuadra_id ? t.cuadras.find((c) => c.id === Number(cuadra_id)) : null;
+    if (cuadra_id && !elegida) throw new ErrorNegocio(`Esa cuadra no está a cargo de ${t.nombre}.`);
+    const cuadra = elegida || t.cuadras.find((c) => c.id === t.cuadra_jornada_id) || (t.cuadras.length === 1 ? t.cuadras[0] : null);
+    if (!cuadra) throw new ErrorNegocio(`Elegí en qué cuadra de ${t.nombre} estacionaste.`);
     const e = iniciarEstacionamiento(db, {
       patente: v.patente,
-      cuadraId: cuadra_id,
-      codigo,
+      cuadraId: cuadra.id,
       conductorId: req.usuario.id,
+      trabajadorId: t.id,
       medio: 'app',
     });
     res.status(201).json(conMontoActual(e, parametros(db)));

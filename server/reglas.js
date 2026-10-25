@@ -19,6 +19,11 @@ export function patenteValida(valor) {
   return FORMATOS_PATENTE.some((re) => re.test(p));
 }
 
+/** ID de trabajador/a (legajo) comparable: sin espacios ni guiones, en mayúsculas ("apk 100" → "APK100"). */
+export function normalizarIdTrabajador(valor) {
+  return String(valor ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
 /** Minutos a cobrar: se respeta un mínimo y se redondea hacia arriba a la fracción. */
 export function minutosFacturables(minutosReales, { fraccion_minutos = 15, minimo_minutos = 30 } = {}) {
   const reales = Math.max(0, Math.ceil(minutosReales));

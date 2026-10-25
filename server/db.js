@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS estacionamientos (
   cuadra_id      INTEGER NOT NULL REFERENCES cuadras(id),
   conductor_id   INTEGER REFERENCES usuarios(id),
   registrado_por INTEGER REFERENCES usuarios(id),
+  trabajador_id  INTEGER REFERENCES usuarios(id),
   medio          TEXT NOT NULL CHECK (medio IN ('app','efectivo')),
   inicio         TEXT NOT NULL,
   fin            TEXT,
@@ -123,9 +124,22 @@ export function abrirDB(path = process.env.DB_PATH || DEFAULT_PATH) {
   const db = new DatabaseSync(path);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;');
   db.exec(SCHEMA);
+  migrar(db);
   const ins = db.prepare('INSERT OR IGNORE INTO parametros (clave, valor) VALUES (?, ?)');
   for (const [k, v] of Object.entries(PARAMETROS_DEFAULT)) ins.run(k, v);
   return db;
+}
+
+// Cambios de esquema para bases creadas con versiones anteriores.
+function migrar(db) {
+  const columnas = db.prepare('PRAGMA table_info(estacionamientos)').all().map((c) => c.name);
+  if (!columnas.includes('trabajador_id')) {
+    db.exec('ALTER TABLE estacionamientos ADD COLUMN trabajador_id INTEGER REFERENCES usuarios(id)');
+    db.exec(`UPDATE estacionamientos SET trabajador_id = COALESCE(registrado_por, (SELECT trabajador_id FROM cuadras WHERE cuadras.id = estacionamientos.cuadra_id))`);
+  }
+  db.exec('CREATE INDEX IF NOT EXISTS idx_est_trabajador ON estacionamientos(trabajador_id)');
+  // El legajo es el ID que el conductor/a ingresa al estacionar: no puede repetirse.
+  db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_usuarios_legajo ON usuarios(legajo) WHERE legajo IS NOT NULL');
 }
 
 export function parametros(db) {

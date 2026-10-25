@@ -1,6 +1,6 @@
 // Operaciones de negocio compartidas entre los distintos perfiles.
 import { parametros, transaccion } from './db.js';
-import { calcularMonto, minutosEntre, normalizarPatente, patenteValida } from './reglas.js';
+import { calcularMonto, minutosEntre, normalizarIdTrabajador, normalizarPatente, patenteValida } from './reglas.js';
 
 export class ErrorNegocio extends Error {
   constructor(mensaje, status = 400) {
@@ -11,11 +11,11 @@ export class ErrorNegocio extends Error {
 
 const SELECT_ESTACIONAMIENTO = `
   SELECT e.*, c.codigo AS cuadra_codigo, c.calle, c.desde, c.hasta, z.id AS zona_id, z.nombre AS zona,
-         z.color AS zona_color, t.nombre AS trabajador
+         z.color AS zona_color, t.nombre AS trabajador, t.legajo AS trabajador_legajo
   FROM estacionamientos e
   JOIN cuadras c ON c.id = e.cuadra_id
   JOIN zonas z ON z.id = c.zona_id
-  LEFT JOIN usuarios t ON t.id = c.trabajador_id`;
+  LEFT JOIN usuarios t ON t.id = COALESCE(e.trabajador_id, c.trabajador_id)`;
 
 export function buscarEstacionamientos(db, where = '', ...args) {
   return db.prepare(`${SELECT_ESTACIONAMIENTO} ${where}`).all(...args);
@@ -41,7 +41,32 @@ export function estacionamientoActivoDe(db, patente) {
   return buscarEstacionamientos(db, `WHERE e.patente = ? AND e.estado = 'activo'`, patente)[0] || null;
 }
 
-export function iniciarEstacionamiento(db, { patente, cuadraId, codigo, conductorId = null, registradoPor = null, medio, ahora }) {
+/**
+ * Busca un trabajador/a activo por su ID (legajo) y devuelve lo que necesita ver el conductor/a:
+ * nombre, cooperativa, si está en jornada y las cuadras que tiene asignadas.
+ */
+export function trabajadorPorId(db, id) {
+  const buscado = normalizarIdTrabajador(id);
+  if (!buscado) throw new ErrorNegocio('Ingresá el ID del trabajador/a.');
+  const t = db
+    .prepare(
+      `SELECT id, nombre, cooperativa, legajo FROM usuarios
+       WHERE rol = 'trabajador' AND activo = 1 AND REPLACE(REPLACE(UPPER(legajo), '-', ''), ' ', '') = ?`,
+    )
+    .get(buscado);
+  if (!t) throw new ErrorNegocio('No hay ningún trabajador/a activo con ese ID. Revisalo en su credencial.', 404);
+  const jornada = db.prepare('SELECT cuadra_id FROM jornadas WHERE trabajador_id = ? AND fin IS NULL').get(t.id);
+  const cuadras = db
+    .prepare(
+      `SELECT c.id, c.codigo, c.calle, c.desde, c.hasta, c.capacidad, z.nombre AS zona, z.color AS zona_color, z.tarifa_hora,
+              (SELECT COUNT(*) FROM estacionamientos e WHERE e.cuadra_id = c.id AND e.estado = 'activo') AS ocupados
+       FROM cuadras c JOIN zonas z ON z.id = c.zona_id WHERE c.trabajador_id = ? ORDER BY c.calle, c.desde`,
+    )
+    .all(t.id);
+  return { ...t, en_jornada: Boolean(jornada), cuadra_jornada_id: jornada?.cuadra_id ?? null, cuadras };
+}
+
+export function iniciarEstacionamiento(db, { patente, cuadraId, codigo, conductorId = null, registradoPor = null, trabajadorId = null, medio, ahora }) {
   const p = normalizarPatente(patente);
   if (!patenteValida(p)) throw new ErrorNegocio('La patente no tiene un formato válido (ej.: AB123CD o ABC123).');
   const params = parametros(db);
@@ -56,10 +81,10 @@ export function iniciarEstacionamiento(db, { patente, cuadraId, codigo, conducto
     }
     const { lastInsertRowid } = db
       .prepare(
-        `INSERT INTO estacionamientos (patente, cuadra_id, conductor_id, registrado_por, medio, inicio, tarifa_hora)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO estacionamientos (patente, cuadra_id, conductor_id, registrado_por, trabajador_id, medio, inicio, tarifa_hora)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(p, cuadra.id, conductorId, registradoPor, medio, ahora || new Date().toISOString(), cuadra.tarifa_hora);
+      .run(p, cuadra.id, conductorId, registradoPor, trabajadorId ?? registradoPor, medio, ahora || new Date().toISOString(), cuadra.tarifa_hora);
     return buscarEstacionamientos(db, 'WHERE e.id = ?', lastInsertRowid)[0];
   });
 }
