@@ -1,0 +1,10 @@
+@media print {
+  @page { margin: 16mm; }
+  body { background: var(--blanco); }
+  .no-imprimir, .barra-superior, .cabecera-portal, .pie-portal, .encabezado-pagina, .lateral, .barra-intranet, .notificaciones { display: none !important; }
+  .cuerpo-pagina, .contenido-intranet { padding: 0 !important; }
+  .tarjeta { box-shadow: none; border: none; }
+  .constancia-documento { padding: 0 !important; }
+  .intranet { display: block; background: var(--blanco); }
+  a { color: inherit; text-decoration: none; }
+}

@@ -1,0 +1,52 @@
+:root {
+  --azul-950: #06162b;
+  --azul-900: #0b2545;
+  --azul-800: #13315c;
+  --azul-700: #1d4477;
+  --azul-600: #275a96;
+  --celeste-600: #1f6fb2;
+  --celeste-500: #2b7bc0;
+  --celeste-300: #8bb8e0;
+  --celeste-100: #e4eef8;
+  --celeste-50: #f2f7fc;
+  --dorado-500: #c9a54a;
+  --dorado-100: #f7f0dc;
+
+  --gris-950: #121a26;
+  --gris-900: #1c2533;
+  --gris-700: #3d4a5c;
+  --gris-600: #556274;
+  --gris-500: #6b7787;
+  --gris-400: #97a1af;
+  --gris-300: #c5ccd6;
+  --gris-200: #dfe4ea;
+  --gris-150: #e8ecf1;
+  --gris-100: #eef1f5;
+  --gris-50: #f6f8fa;
+  --blanco: #ffffff;
+
+  --rojo-700: #a3241a;
+  --rojo-600: #c0392b;
+  --rojo-100: #fbeceb;
+  --verde-700: #1b6e3c;
+  --verde-100: #e5f3ea;
+  --ambar-700: #8a5a00;
+  --ambar-100: #fcf1dc;
+  --turquesa-700: #0e6b65;
+  --turquesa-100: #e0f1ef;
+
+  --fuente-titulos: 'Encode Sans', 'Roboto', system-ui, sans-serif;
+  --fuente-texto: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fuente-mono: 'Roboto Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  --radio-sm: 3px;
+  --radio: 5px;
+  --radio-lg: 8px;
+  --sombra-1: 0 1px 2px rgba(11, 37, 69, 0.06);
+  --sombra-2: 0 2px 8px rgba(11, 37, 69, 0.08), 0 1px 2px rgba(11, 37, 69, 0.06);
+  --sombra-3: 0 12px 32px rgba(6, 22, 43, 0.18);
+
+  --ancho-contenido: 1180px;
+  --alto-barra: 60px;
+  --ancho-lateral: 248px;
+}
