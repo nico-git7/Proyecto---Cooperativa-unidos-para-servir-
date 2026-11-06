@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0DFC94E7-29C2-47C3-B4D7-CB2FA53A84DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoliciaTucuman.Api", "src\PoliciaTucuman.Api\PoliciaTucuman.Api.csproj", "{62BA0222-4937-412C-BDC3-A36A232802CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoliciaTucuman.Domain", "src\PoliciaTucuman.Domain\PoliciaTucuman.Domain.csproj", "{C9A116D8-6BDA-4DD0-9530-0E3945F4CE7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoliciaTucuman.Infrastructure", "src\PoliciaTucuman.Infrastructure\PoliciaTucuman.Infrastructure.csproj", "{0C2913BB-9CFB-4771-A9E2-578F1E84D036}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8C248685-FE53-4B38-A224-34FB041BD265}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoliciaTucuman.Tests", "tests\PoliciaTucuman.Tests\PoliciaTucuman.Tests.csproj", "{7C97E9E6-8185-4B84-9915-1247851CAC1D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{62BA0222-4937-412C-BDC3-A36A232802CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62BA0222-4937-412C-BDC3-A36A232802CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62BA0222-4937-412C-BDC3-A36A232802CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62BA0222-4937-412C-BDC3-A36A232802CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9A116D8-6BDA-4DD0-9530-0E3945F4CE7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9A116D8-6BDA-4DD0-9530-0E3945F4CE7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9A116D8-6BDA-4DD0-9530-0E3945F4CE7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9A116D8-6BDA-4DD0-9530-0E3945F4CE7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C2913BB-9CFB-4771-A9E2-578F1E84D036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C2913BB-9CFB-4771-A9E2-578F1E84D036}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C2913BB-9CFB-4771-A9E2-578F1E84D036}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2913BB-9CFB-4771-A9E2-578F1E84D036}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C97E9E6-8185-4B84-9915-1247851CAC1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C97E9E6-8185-4B84-9915-1247851CAC1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C97E9E6-8185-4B84-9915-1247851CAC1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C97E9E6-8185-4B84-9915-1247851CAC1D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{62BA0222-4937-412C-BDC3-A36A232802CE} = {0DFC94E7-29C2-47C3-B4D7-CB2FA53A84DE}
+		{C9A116D8-6BDA-4DD0-9530-0E3945F4CE7B} = {0DFC94E7-29C2-47C3-B4D7-CB2FA53A84DE}
+		{0C2913BB-9CFB-4771-A9E2-578F1E84D036} = {0DFC94E7-29C2-47C3-B4D7-CB2FA53A84DE}
+		{7C97E9E6-8185-4B84-9915-1247851CAC1D} = {8C248685-FE53-4B38-A224-34FB041BD265}
+	EndGlobalSection
+EndGlobal
