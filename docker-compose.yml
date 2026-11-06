@@ -1,0 +1,62 @@
+name: policia-tucuman
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-policia_tucuman}
+      POSTGRES_USER: ${POSTGRES_USER:-policia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Definí POSTGRES_PASSWORD en .env}
+      TZ: America/Argentina/Tucuman
+    volumes:
+      - datos_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Principal: Host=db;Port=5432;Database=${POSTGRES_DB:-policia_tucuman};Username=${POSTGRES_USER:-policia};Password=${POSTGRES_PASSWORD}
+      Jwt__Clave: ${JWT_CLAVE:?Definí JWT_CLAVE en .env (32 caracteres o más)}
+      Correo__UrlServicio: http://mailer:4000
+      Correo__ApiKey: ${MAILER_API_KEY:?Definí MAILER_API_KEY en .env}
+      Correo__UrlSitio: ${URL_SITIO:-http://localhost}
+      Semilla__DatosDemo: ${DATOS_DEMO:-true}
+      Semilla__PasswordInicial: ${ADMIN_PASSWORD:-Tucuman2026}
+      Semilla__EmailAdministrador: ${ADMIN_EMAIL:-}
+      Swagger__Habilitado: ${SWAGGER:-false}
+    volumes:
+      - datos_api:/data
+
+  mailer:
+    build: ./mailer
+    restart: unless-stopped
+    environment:
+      MAILER_API_KEY: ${MAILER_API_KEY}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-Policía de Tucumán <no-responder@localhost>}
+      MAILER_SALIDA: /tmp/correos
+
+  web:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${WEB_PUERTO:-80}:80"
+
+volumes:
+  datos_postgres:
+  datos_api:
